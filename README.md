@@ -16,4 +16,9 @@ A SimPy/z3 implementation of a fictional printer cases. The printer consists of 
 
 Monte Carlo simulation is used to deal with the probabilistic part by running many Z3 solver computations with different inputs for the probabilistic prices.
 
-A CDF for the lower bound and one for the upper bound is the result.
+A PDF, eCDF, inverse eCDF, respectively, that each contain the lower bound and one for the upper bound are the result, as follows.
+![PDF](printer_costs/printer_cost_pdf.png)
+
+![eCDF](printer_costs/printer_cost_ecdf.png)
+
+![inverse eCDF](printer_costs/printer_cost_inverse_ecdf.png)
