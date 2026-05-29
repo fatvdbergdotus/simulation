@@ -14,9 +14,10 @@ See [Python executable](printer_costs/compute_cost_ecdfs.py)
 
 A SimPy/z3 implementation of a fictional printer cases. The printer consists of multiple parts, which are prices either non-determinsitcally or probabilistically.
 
-Monte Carlo simulation is used to deal with the probabilistic part by running many Z3 solver computations with different inputs for the probabilistic prices.
+Monte Carlo simulation is used to deal with the probabilistic part by running many Z3 solver computations with different inputs for the probabilistic prices. The code executes according to the following flow diagram:
+![Mermaid diagram](printer_costs/mermaid-diagram.png)
 
-A PDF, eCDF, inverse eCDF, respectively, that each contain the lower bound and one for the upper bound are the result, as follows.
+A PDF, eCDF, inverse eCDF, respectively, that each contain the lower bound and one for the upper bound are the result of executing the code, as follows.
 ![PDF](printer_costs/printer_cost_pdf.png)
 
 ![eCDF](printer_costs/printer_cost_ecdf.png)
