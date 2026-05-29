@@ -1,7 +1,7 @@
-# A Simpy implementation of chapter 4 of my PhD thesis
+# A Simpy implementation of Chapter 4 of my PhD thesis
 See [Jupyter Notebook](phd_thesis/09%20PhD%20thesis%20iDSL.ipynb)
 
-See also [https://drops.dagstuhl.de/entities/document/10.4230/OASIcs.MCPS.2014.80](https://drops.dagstuhl.de/entities/document/10.4230/OASIcs.MCPS.2014.80) also for the published paper
+See also [https://drops.dagstuhl.de/entities/document/10.4230/OASIcs.MCPS.2014.80](https://drops.dagstuhl.de/entities/document/10.4230/OASIcs.MCPS.2014.80) also for the published paper and [https://github.com/fatvdbergdotus/diploms-and-grades/blob/main/publications/thesis_F_van_den_Berg.pdf](https://github.com/fatvdbergdotus/diploms-and-grades/blob/main/publications/thesis_F_van_den_Berg.pdf) for the whole PhD thesis of which Chapter 4 is focal.
 
 A SimPy simulation of a Philips Imaging System with two concurrent systems, the so-called Biplane system, for 3D images.
 
