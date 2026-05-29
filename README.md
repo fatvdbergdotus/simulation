@@ -7,7 +7,7 @@ A SimPy simulation of a Philips Imaging System with two concurrent systems, the 
 
 Both systems need to repeat for shared resources and what can be seen from different simulation runs is that when the different imaging systems are further apart in time, less concurrency happens.
 
-A CDF for different times is the result.
+A CDF for different times is the result (as embedded in the Jupyter Notebook).
 
 # A Simpy/Z3 implementation of a fictional printer case
 See [Python executable](printer_costs/compute_cost_ecdfs.py)
