@@ -1,5 +1,5 @@
 # A Simpy/Z3 implementation of a fictional printer case
-See [Python executable](compute_cost_ecdfs.py)
+See [Python executable](compute_cost_ecdfs.py) [Possible base DSL instance](dsl.txt)
 
 A SimPy/z3 implementation of a fictional printer cases. The printer consists of multiple parts, which are prices either non-determinsitcally or probabilistically.
 
