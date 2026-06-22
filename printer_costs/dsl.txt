@@ -1,68 +1,55 @@
-model CanonPrinter
+model PrinterCosts {
 
-step 10
+  monte_carlo {
+    runs = 10000
+  }
 
-component PrintHead {
-    probabilistic
-    cost distribution normal(500,50)
-    cost range [380,600]
+  probabilistic {
+
+    print_head ~ Normal(mean=500, stddev=50)
+      truncate [380, 600]
+
+    controller_board ~ Normal(mean=400, stddev=80)
+      truncate [200, 600]
+
+    ink_system ~ Choice(200, 220, 1000)
+  }
+
+  uncertain {
+
+    paper_feed     in [100, 300] step 20
+    carriage_system in [150, 400] step 20
+    power_supply   in [80, 200] step 20
+    sensors        in [20, 100] step 20
+    frame          in [200, 700] step 20
+    control_panel  in [80, 250] step 20
+  }
+
+  derived {
+
+    total_cost =
+        print_head +
+        controller_board +
+        ink_system +
+        paper_feed +
+        carriage_system +
+        power_supply +
+        sensors +
+        frame +
+        control_panel
+  }
+
+  analysis {
+
+    minimize total_cost
+    maximize total_cost
+
+    outputs {
+      pdf(total_cost)
+      ecdf(total_cost)
+      inverse_ecdf(total_cost)
+
+      percentiles = [50%, 95%, 99%]
+    }
+  }
 }
-
-component ControllerBoard {
-    probabilistic
-    cost distribution normal(400,80)
-    cost range [200,600]
-}
-
-component InkSystem {
-    probabilistic
-    cost distribution ecdf [200,220,1000]
-}
-
-component PaperFeed {
-    nondeterministic
-    cost range [100,300]
-}
-
-component CarriageSystem {
-    nondeterministic
-    cost range [150,400]
-}
-
-component PowerSupply {
-    nondeterministic
-    cost range [80,200]
-}
-
-component Sensors {
-    nondeterministic
-    cost range [20,100]
-}
-
-component Frame {
-    nondeterministic
-    cost range [200,700]
-}
-
-component ControlPanel {
-    nondeterministic
-    cost range [80,250]
-}
-
-component Printer {
-
-    component PrintHead
-    component ControllerBoard
-    component InkSystem
-    component PaperFeed
-    component CarriageSystem
-    component PowerSupply
-    component Sensors
-    component Frame
-    component ControlPanel
-
-    cost = sum(components.cost)
-}
-
-montecarlo 10000
-plot ecdf
