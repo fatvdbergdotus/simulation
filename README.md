@@ -1,3 +1,8 @@
+# Chapter 4 of my PhD thesis
+See: [project](https://github.com/fatvdbergdotus/simulation/tree/main/phd_thesis)
+
+The `phd_thesis` project is a SimPy-based implementation of Chapter 4 of the author's PhD thesis, modeling a Philips Interventional X-Ray (iXR) imaging system consisting of two concurrent imaging chains in a biplane configuration used for advanced image-guided medical procedures. The simulation focuses on resource contention and concurrency between the two imaging systems, exploring how shared resources affect system performance and workflow efficiency. By running multiple simulation scenarios with varying timing relationships between the imaging systems, the model demonstrates that increasing the temporal separation between activities reduces resource conflicts and concurrency effects. The accompanying Jupyter notebook presents the simulation results using cumulative distribution functions (CDFs), providing quantitative insight into the behavior and performance of the system under different operating conditions.
+
 # The printer_costs project
 See: [project](https://github.com/fatvdbergdotus/simulation/tree/main/printer_costs)
 
