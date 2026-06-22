@@ -1,0 +1,213 @@
+package org.example.printercosts.generator
+
+import org.eclipse.emf.ecore.resource.Resource
+import org.eclipse.xtext.generator.AbstractGenerator
+import org.eclipse.xtext.generator.IFileSystemAccess2
+import org.eclipse.xtext.generator.IGeneratorContext
+import org.example.printercosts.printerCosts.*
+
+class PrinterCostsGenerator extends AbstractGenerator {
+
+    override void doGenerate(
+        Resource resource,
+        IFileSystemAccess2 fsa,
+        IGeneratorContext context
+    ) {
+
+        resource.allContents
+            .toIterable
+            .filter(Model)
+            .forEach [
+
+                fsa.generateFile(
+                    name.toLowerCase + ".py",
+                    compile
+                )
+            ]
+    }
+
+    def CharSequence compile(Model model) '''
+import random
+import numpy as np
+import matplotlib.pyplot as plt
+from z3 import *
+
+def ecdf(data):
+    x = np.sort(data)
+    y = np.arange(1, len(x) + 1) / len(x)
+    return x, y
+
+def plot_ecdf(lower_bounds, upper_bounds):
+
+    x1, y1 = ecdf(lower_bounds)
+    x2, y2 = ecdf(upper_bounds)
+
+    plt.figure(figsize=(10,6))
+    plt.plot(x1, y1, label="Lower Bound")
+    plt.plot(x2, y2, label="Upper Bound")
+
+    plt.xlabel("Cost")
+    plt.ylabel("Probability")
+    plt.title("Empirical CDF")
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
+lower_bounds = []
+upper_bounds = []
+
+for _ in range(«model.monteCarlo.runs»):
+
+«FOR p : model.probabilisticVariables»
+    «generateDistribution(p)»
+«ENDFOR»
+
+    opt_min = Optimize()
+    opt_max = Optimize()
+
+«FOR u : model.uncertainVariables»
+
+    «u.name»_min = Int("«u.name»_min")
+    «u.name»_max = Int("«u.name»_max")
+
+    opt_min.add(
+        «u.name»_min >= «u.lower»,
+        «u.name»_min <= «u.upper»
+    )
+
+    opt_max.add(
+        «u.name»_max >= «u.lower»,
+        «u.name»_max <= «u.upper»
+    )
+
+«IF u.step !== null»
+    opt_min.add((«u.name»_min - «u.lower») % «u.step» == 0)
+    opt_max.add((«u.name»_max - «u.lower») % «u.step» == 0)
+«ENDIF»
+
+«ENDFOR»
+
+«FOR d : model.derivedVariables»
+
+    total_cost_min = «d.expression.compileMin(model)»
+    total_cost_max = «d.expression.compileMax(model)»
+
+    opt_min.minimize(total_cost_min)
+    opt_max.maximize(total_cost_max)
+
+    if opt_min.check() == sat:
+        lower_bounds.append(
+            opt_min.model()
+                   .eval(total_cost_min)
+                   .as_long()
+        )
+
+    if opt_max.check() == sat:
+        upper_bounds.append(
+            opt_max.model()
+                   .eval(total_cost_max)
+                   .as_long()
+        )
+
+«ENDFOR»
+
+plot_ecdf(lower_bounds, upper_bounds)
+'''
+
+    def dispatch CharSequence generateDistribution(
+        NormalDistribution d
+    ) '''
+while True:
+    «d.variable.name» = random.gauss(
+        «d.mean»,
+        «d.stddev»
+    )
+    if «d.lower» <= «d.variable.name» <= «d.upper»:
+        break
+'''
+
+    def dispatch CharSequence generateDistribution(
+        UniformDistribution d
+    ) '''
+«d.variable.name» = random.uniform(
+    «d.lower»,
+    «d.upper»
+)
+'''
+
+    def dispatch CharSequence generateDistribution(
+        TriangularDistribution d
+    ) '''
+«d.variable.name» = random.triangular(
+    «d.low»,
+    «d.high»,
+    «d.mode»
+)
+'''
+
+    def dispatch CharSequence generateDistribution(
+        ChoiceDistribution d
+    ) '''
+«d.variable.name» = random.choice(
+    [«FOR v : d.values SEPARATOR ', '»«v»«ENDFOR»]
+)
+'''
+
+    def String compileMin(
+        Expression expr,
+        Model model
+    ) {
+
+        var result = expr.toPython
+
+        for (u : model.uncertainVariables) {
+            result = result.replace(
+                u.name,
+                u.name + "_min"
+            )
+        }
+
+        result
+    }
+
+    def String compileMax(
+        Expression expr,
+        Model model
+    ) {
+
+        var result = expr.toPython
+
+        for (u : model.uncertainVariables) {
+            result = result.replace(
+                u.name,
+                u.name + "_max"
+            )
+        }
+
+        result
+    }
+
+    def dispatch String toPython(NumberLiteral e) {
+        e.value.toString
+    }
+
+    def dispatch String toPython(VariableRef e) {
+        e.variable.name
+    }
+
+    def dispatch String toPython(Addition e) '''
+(«e.left.toPython» + «e.right.toPython»)
+'''
+
+    def dispatch String toPython(Subtraction e) '''
+(«e.left.toPython» - «e.right.toPython»)
+'''
+
+    def dispatch String toPython(Multiplication e) '''
+(«e.left.toPython» * «e.right.toPython»)
+'''
+
+    def dispatch String toPython(Division e) '''
+(«e.left.toPython» / «e.right.toPython»)
+'''
+}
