@@ -3,6 +3,7 @@ See:
 - [Generated python executable](compute_cost_ecdfs.py)
 - [Possible base DSL instance](dsl_instance.txt)
 - [Possible base DSL grammar](dsl_grammar.txt)
+- [Xtend generator](xtend_generator.txt)
 
 A SimPy/z3 implementation of a fictional printer cases. The printer consists of multiple parts, which are prices either non-determinsitcally or probabilistically.
 
