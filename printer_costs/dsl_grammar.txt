@@ -1,0 +1,157 @@
+(* ========================================================= *)
+(* Printer Cost Uncertainty DSL                              *)
+(* ========================================================= *)
+
+model           ::= "model" IDENTIFIER "{" section* "}"
+
+section         ::= monte_carlo_section
+                  | probabilistic_section
+                  | uncertain_section
+                  | derived_section
+                  | analysis_section
+
+(* ========================================================= *)
+(* Monte Carlo Configuration                                 *)
+(* ========================================================= *)
+
+monte_carlo_section
+                ::= "monte_carlo" "{"
+                        "runs" "=" INTEGER
+                    "}"
+
+(* ========================================================= *)
+(* Random Variables                                          *)
+(* ========================================================= *)
+
+probabilistic_section
+                ::= "probabilistic" "{"
+                        probabilistic_decl*
+                    "}"
+
+probabilistic_decl
+                ::= IDENTIFIER "~" distribution truncation?
+
+distribution    ::= normal_distribution
+                  | uniform_distribution
+                  | triangular_distribution
+                  | choice_distribution
+
+normal_distribution
+                ::= "Normal"
+                    "("
+                      "mean" "=" number ","
+                      "stddev" "=" number
+                    ")"
+
+uniform_distribution
+                ::= "Uniform"
+                    "("
+                      number ","
+                      number
+                    ")"
+
+triangular_distribution
+                ::= "Triangular"
+                    "("
+                      number ","
+                      number ","
+                      number
+                    ")"
+
+choice_distribution
+                ::= "Choice"
+                    "("
+                      number ("," number)*
+                    ")"
+
+truncation      ::= "truncate"
+                    "[" number "," number "]"
+
+(* ========================================================= *)
+(* Non-deterministic Variables                               *)
+(* ========================================================= *)
+
+uncertain_section
+                ::= "uncertain" "{"
+                        uncertain_decl*
+                    "}"
+
+uncertain_decl  ::= IDENTIFIER
+                    "in"
+                    "[" number "," number "]"
+                    ("step" number)?
+
+(* ========================================================= *)
+(* Derived Variables                                         *)
+(* ========================================================= *)
+
+derived_section ::= "derived" "{"
+                        derived_decl*
+                    "}"
+
+derived_decl    ::= IDENTIFIER "=" expression
+
+expression      ::= additive
+
+additive        ::= multiplicative
+                    (("+" | "-") multiplicative)*
+
+multiplicative  ::= unary
+                    (("*" | "/") unary)*
+
+unary           ::= ("+" | "-") unary
+                  | primary
+
+primary         ::= IDENTIFIER
+                  | number
+                  | "(" expression ")"
+
+(* ========================================================= *)
+(* Analysis                                                  *)
+(* ========================================================= *)
+
+analysis_section
+                ::= "analysis" "{"
+                        analysis_stmt*
+                    "}"
+
+analysis_stmt   ::= optimization_stmt
+                  | output_stmt
+                  | percentile_stmt
+
+optimization_stmt
+                ::= "minimize" IDENTIFIER
+                  | "maximize" IDENTIFIER
+
+output_stmt     ::= "outputs" "{"
+                        output_spec*
+                    "}"
+
+output_spec     ::= "pdf" "(" IDENTIFIER ")"
+                  | "ecdf" "(" IDENTIFIER ")"
+                  | "inverse_ecdf" "(" IDENTIFIER ")"
+
+percentile_stmt ::= "percentiles"
+                    "="
+                    "["
+                      percentage
+                      ("," percentage)*
+                    "]"
+
+(* ========================================================= *)
+(* Lexical                                                   *)
+(* ========================================================= *)
+
+number          ::= INTEGER | FLOAT
+
+percentage      ::= number "%"
+
+IDENTIFIER      ::= LETTER (LETTER | DIGIT | "_")*
+
+INTEGER         ::= DIGIT+
+
+FLOAT           ::= DIGIT+ "." DIGIT+
+
+LETTER          ::= "A".."Z" | "a".."z"
+
+DIGIT           ::= "0".."9"
