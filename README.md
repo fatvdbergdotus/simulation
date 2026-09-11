@@ -1,4 +1,4 @@
-# Chapter 4 of my PhD thesis
+# Chapter 4 of my PhD thesis: Philips X-Ray imaging system
 See: [project](https://github.com/fatvdbergdotus/simulation/tree/main/phd_thesis)
 
 The `phd_thesis` project is a SimPy-based implementation of Chapter 4 of the author's PhD thesis, modeling a Philips Interventional X-Ray (iXR) imaging system consisting of two concurrent imaging chains in a biplane configuration used for advanced image-guided medical procedures. The simulation focuses on resource contention and concurrency between the two imaging systems, exploring how shared resources affect system performance and workflow efficiency. By running multiple simulation scenarios with varying timing relationships between the imaging systems, the model demonstrates that increasing the temporal separation between activities reduces resource conflicts and concurrency effects. The accompanying Jupyter notebook presents the simulation results using cumulative distribution functions (CDFs), providing quantitative insight into the behavior and performance of the system under different operating conditions.
@@ -7,3 +7,8 @@ The `phd_thesis` project is a SimPy-based implementation of Chapter 4 of the aut
 See: [project](https://github.com/fatvdbergdotus/simulation/tree/main/printer_costs)
 
 The `printer_costs` project demonstrates a hybrid uncertainty-analysis approach for estimating the total cost of a printer with uncertain component prices. It combines Monte Carlo simulation to sample probabilistic cost inputs with the Z3 constraint solver to compute feasible lower and upper bounds on total cost when some component values are only partially known. By repeatedly sampling inputs and solving the resulting constraints, the model generates distributions of possible printer costs, which are then visualized using probability density functions (PDFs), empirical cumulative distribution functions (eCDFs), and inverse eCDFs. The project serves as a compact example of how probabilistic uncertainty and constraint-based reasoning can be combined to support cost estimation and risk analysis.
+
+# Projectile simulator
+See: [project](https://github.com/fatvdbergdotus/tno-simulation)
+
+The Projectile Trajectory Simulator is a Python-based simulation project that models the flight of a spherical projectile launched at an angle and calculates its trajectory under the influence of gravity, aerodynamic drag, and an initial thrust force. The project uses an object-oriented design with separate state, force, and simulator abstractions and implements both Forward Euler and Explicit/Symplectic Euler numerical integration methods. It includes configurable stopping criteria, calculates impact time and distance, and provides Matplotlib-based trajectory visualization and comparisons between different simulation configurations. The repository also includes unit tests and supporting scripts for running tests and generating documentation.
